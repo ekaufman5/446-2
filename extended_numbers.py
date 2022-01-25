@@ -18,7 +18,7 @@ class Q:
     def __sub__(self, other):
         return self + (-other)
     
-    def __mul__(self, other):
+    def mul(self, other):
         if isinstance(other, Q):
             return Q( (self.data[0]*other.data[0] - self.data[1]*other.data[1] - self.data[2]*other.data[2] - self.data[3]*other.data[3],
                        self.data[1]*other.data[0] + self.data[0]*other.data[1] + self.data[2]*other.data[3] - self.data[3]*other.data[2],
