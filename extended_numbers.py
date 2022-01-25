@@ -53,6 +53,14 @@ class O:
     
     def __sub__(self, other):
         return self + (-other)
+    def __mul__(self,other):
+        if isinstance(other, O):
+            return(self.mul(other))
+        elif isinstance(other, numbers.Number):
+            print("error here?")
+            return O( other*self.data )
+        else:
+            raise ValueError("Can only multiply complex numbers by other complex numbers or by scalars")
     def mul(self, other):
         if isinstance(other, O):
             a = self.data[0]
