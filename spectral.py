@@ -35,7 +35,7 @@ class Fourier(Basis):
             raise NotImplementedError("Can only perform transforms for float64 or complex128")
 
     def _transform_to_grid_complex(self, data, axis, scale):
-        temp = scipy.fft.ifft(new, axis=axis)
+        temp = scipy.fft.ifft(data, axis=axis)
         return temp
 
     def _transform_to_coeff_complex(self, data, axis):
