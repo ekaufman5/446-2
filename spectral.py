@@ -35,49 +35,48 @@ class Fourier(Basis):
             raise NotImplementedError("Can only perform transforms for float64 or complex128")
 
     def _transform_to_grid_complex(self, data, axis, scale):        
-        N2 = int(self.N/2) #32
-        
-        pos = data[0:N2:None]
-        imags = data[N2::None] #32
- 
-        new = np.zeros(int(self.N*scale), dtype=np.complex128)
-        pos = new[0:N2]
-        imags = new[-N2:] 
-
-        temp = scipy.fft.ifft(new, axis=axis)
-       
+        N = int(self.N)
+        N2 = int(N/2)
+        pos = data[:N2]
+        negs = data[-N2:]
+        new = np.zeros(int(self.N * scale), dtype=np.complex128)
+        new[:N2] = pos
+        new[-N2:] = negs
+        temp = scale * N * scipy.fft.ifft(new)
         return temp
 
     def _transform_to_coeff_complex(self, data, axis):
         M = data.shape[0]
-        N2 = int(self.N/2)
-        temp =  scipy.fft.fft(data, axis=axis)/M
-        new = np.zeros(int(self.N), dtype=np.complex128)
+        N = int(self.N)
+        N2 = int(N/2)
+        temp = scipy.fft.fft(data) / M
+        new = np.zeros(N, dtype=np.complex128)
         new[:N2] = temp[:N2]
         new[-N2:] = temp[-N2:]
         return new
 
     def _transform_to_grid_real(self, data, axis, scale):
-        N = self.N
-        N2 = int(self.N/2)
-        real = data[::2]
-        imag = data[1::2]
-        new = np.zeros(scale*N+1, dtype=np.complex128)
-        new.real[:N2] = real
+        N = int(self.N)
+        N2 = int(N/2) 
+        reals = data[::2]
+        imags = data[1::2]      
+        new = np.zeros(int(scale*N2)+1, dtype=np.complex128)
+        new.real[:N2] = reals
         new.imag[:N2] = imags
-        temp = scipy.fft.irfft(new, axis=axis) * scale * N2
+        temp = scale * (N2) * scipy.fft.irfft(new)
         return temp
 
     def _transform_to_coeff_real(self, data, axis):
-        N = self.N
-        N2 = int(N/2)
-        temp = scipy.fft.rfft(data, axis=axis)
-        new = np.zeros(N, dtype=float64)
-        real = temp.real[:N2]
+        M2 = int(data.shape[0]/2)
+        N = int(self.N)
+        N2 = int(N/2)        
+        temp = scipy.fft.rfft(data)
+        reals = temp.real[:N2]
         imags = temp.imag[:N2]
-        new[::2] = real
-        new[1::2] = imags        
-        return new
+        new = np.zeros(N, dtype=np.float64)
+        new[::2] = reals
+        new[1::2] = imags
+        return new / (M2)
 
 
 class Domain:
