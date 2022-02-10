@@ -6,12 +6,12 @@ from scipy import sparse
 class KdVEquation:
 
     def __init__(self, domain, u):
-        dtype=self.dtype
-        u = spectral.Field(domain, dtype=dtype)
-        dudx = spectral.Field(domain, dtype=dtype)
-        ududx = spectral.Field(domain, dtype=dtype)
+        #dtype=self.dtype
+        u = spectral.Field(domain)
+        dudx = spectral.Field(domain)
+        ududx = spectral.Field(domain)
         N = x_basis.N
-        kx = x_basis.wavenumbers(dtype)
+        kx = x_basis.wavenumbers()
 
     def evolve(self, timestepper, dt, num_steps):
         u.require_coeff_space()
