@@ -14,6 +14,7 @@ class KdVEquation:
         #kx = x_basis.wavenumbers()
 
     def evolve(self, timestepper, dt, num_steps):
+        u = self.u        
         u.require_coeff_space()
         dudx.require_coeff_space()
         dudx.data = 1j*kx*u.data
