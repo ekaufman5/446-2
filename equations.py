@@ -10,8 +10,8 @@ class KdVEquation:
         u = spectral.Field(domain)
         dudx = spectral.Field(domain)
         ududx = spectral.Field(domain)
-        N = x_basis.N
-        kx = x_basis.wavenumbers()
+        #N = x_basis.N
+        #kx = x_basis.wavenumbers()
 
     def evolve(self, timestepper, dt, num_steps):
         u.require_coeff_space()
