@@ -21,21 +21,23 @@ class KdVEquation:
         dudx = self.dudx
         ududx = self.ududx        
         kx = self.kx
-        u.require_coeff_space()
-        dudx.require_coeff_space()
-        dudx.data = 1j*kx*u.data
-        u.require_grid_space()
-        dudx.require_grid_space()
-        ududx.require_grid_space()
-        ududx.data = 6 * u.data * dudx.data
-        ududx.require_coeff_space()
+        for i in range(num_steps):        
+            u.require_coeff_space()
+            dudx.require_coeff_space()
+            dudx.data = 1j*kx*u.data
+            u.require_grid_space()
+            dudx.require_grid_space()
+            ududx.require_grid_space()
+            ududx.data = 6 * u.data * dudx.data
+            ududx.require_coeff_space()
+    
+            diag = 1/dt + kx**3
+            LHS = sparse.diags(diag)
+            u.require_coeff_space()
+            RHS.data += u.data/dt
+            timestepper.step(dt)            
+            #u.data = spla.spsolve(LHS, RHS.data)
 
-        diag = 1/dt + kx**3
-        LHS = sparse.diags(diag)
-        u.require_coeff_space()
-        RHS.data += u.data/dt
-        u.data = spla.spsolve(LHS, RHS.data)
-        u.require_coeff_space()
 
 class SHEquation:
 
