@@ -9,8 +9,8 @@ class KdVEquation:
         self.dtype=u.dtype
         print(self.dtype)
         self.u = u
-        self.dudx = spectral.Field(domain, dtype=self.dtype)
-        self.ududx = spectral.Field(domain, dtype=self.dtype)
+        self.dudx = spectral.Field(domain, dtype=u.dtype)
+        self.ududx = spectral.Field(domain, dtype=u.dtype)
         N = len(u.data)
         print(N)
         x_basis = x_basis = spectral.Fourier(N)        
