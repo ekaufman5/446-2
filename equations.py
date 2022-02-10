@@ -10,7 +10,7 @@ class KdVEquation:
         self.u = u
         self.dudx = spectral.Field(domain, dtype=self.dtype)
         self.ududx = spectral.Field(domain, dtype=self.dtype)
-        x_basis = x_basis = spectral.Fourier(u.N)
+        x_basis = x_basis = spectral.Fourier(self.N)
         self.N = x_basis.N
         self.kx = x_basis.wavenumbers(u.dtype)        
         #N = x_basis.N
