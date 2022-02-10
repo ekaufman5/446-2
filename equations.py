@@ -29,12 +29,12 @@ class KdVEquation:
             dudx.require_grid_space()
             ududx.require_grid_space()
             ududx.data = 6 * u.data * dudx.data
-            ududx.require_coeff_space()
+            #ududx.require_coeff_space()
     
-            diag = 1/dt + kx**3
-            LHS = sparse.diags(diag)
-            u.require_coeff_space()
-            RHS.data += u.data/dt
+            #diag = 1/dt + kx**3
+            #LHS = sparse.diags(diag)
+            #u.require_coeff_space()
+            #RHS.data += u.data/dt
             timestepper.step(dt)            
             #u.data = spla.spsolve(LHS, RHS.data)
 
