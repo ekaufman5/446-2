@@ -7,14 +7,16 @@ class KdVEquation:
 
     def __init__(self, domain, u):
         #dtype=self.dtype
-        u = spectral.Field(domain)
-        dudx = spectral.Field(domain)
-        ududx = spectral.Field(domain)
+        self.u = u
+        self.dudx = spectral.Field(domain)
+        self.ududx = spectral.Field(domain)
         #N = x_basis.N
         #kx = x_basis.wavenumbers()
 
     def evolve(self, timestepper, dt, num_steps):
-        u = self.u        
+        u = self.u
+        dudx = self.dudx
+        ududx = self.ududx        
         u.require_coeff_space()
         dudx.require_coeff_space()
         dudx.data = 1j*kx*u.data
