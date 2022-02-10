@@ -6,10 +6,13 @@ from scipy import sparse
 class KdVEquation:
 
     def __init__(self, domain, u):
-        #dtype=self.dtype
+        self.dtype=u.dtype
         self.u = u
-        self.dudx = spectral.Field(domain)
-        self.ududx = spectral.Field(domain)
+        self.dudx = spectral.Field(domain, dtype=self.dtype)
+        self.ududx = spectral.Field(domain, dtype=self.dtype)
+        x_basis = u.xbasis
+        self.N = x_basis.N
+        self.kx = x_basis.wavenumbers(u.dtype)        
         #N = x_basis.N
         #kx = x_basis.wavenumbers()
 
@@ -17,6 +20,7 @@ class KdVEquation:
         u = self.u
         dudx = self.dudx
         ududx = self.ududx        
+        kx = self.kx
         u.require_coeff_space()
         dudx.require_coeff_space()
         dudx.data = 1j*kx*u.data
