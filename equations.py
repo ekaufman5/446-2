@@ -35,6 +35,7 @@ class KdVEquation:
         u.require_coeff_space()
         RHS.data += u.data/dt
         u.data = spla.spsolve(LHS, RHS.data)
+        u.require_coeff_space()
 
 class SHEquation:
 
