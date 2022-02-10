@@ -6,6 +6,7 @@ from scipy import sparse
 class KdVEquation:
 
     def __init__(self, domain, u):
+        dtype=self.dtype
         u = spectral.Field(domain, dtype=dtype)
         dudx = spectral.Field(domain, dtype=dtype)
         ududx = spectral.Field(domain, dtype=dtype)
