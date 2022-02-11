@@ -52,9 +52,37 @@ class KdVEquation:
 class SHEquation:
 
     def __init__(self, domain, u):
-        pass
+        self.dtype=u.dtype         
+        self.u = u
+        self.domain=domain
+        self.RHS = spectral.Field(domain, dtype=u.dtype)
+        self.problem = spectral.InitialValueProblem(domain, [self.u], [self.RHS], dtype=u.dtype)
+        x_basis = domain.bases[0]
+        N = x_basis.N       
+        self.kx = x_basis.wavenumbers(u.dtype)
+        p = self.problem.pencils[0]
+        iden = sparse.eye(N) 
+        p.M =  iden 
+        if self.dtype == np.complex128:
+            diag = 1j*self.kx
+            D = sparse.diags(diag)
+            D2 = D.multiply(D)
+            D3 = D2.multiply(D2)
+        else: 
+            diag = np.zeros(N)
+            diag[::2] = -self.kx[::2]**2
+            diag[1::2] = -self.kx[1::2]**2
+            D2 = sparse.diags(diag)
+            D3 = D2.multiply(D2)
+        p.L = 1.3*iden + 2*D2 + D3
 
     def evolve(self, timestepper, dt, num_steps):
-        pass
+        ts = timestepper(self.problem)        
+        u = self.u
+        RHS = self.RHS           
+        u.require_grid_space(scales=3/2)
+        RHS.require_grid_space(scales=3/2)
+        RHS.data = -u.data**3  + 1.8 * u.data**2
+        ts.step(dt)
 
 
