@@ -94,13 +94,14 @@ class CGLEquation:
         
         self.RHS = spectral.Field(domain, dtype=dtype)
         self.RHS0 = spectral.Field(domain, dtype=dtype)
-        self.problem = spectral.InitialValueProblem(domain, [u, ux], [self.RHS0,self.RHS], num_BCs=2, dtype = dtype)
+        self.problem = spectral.InitialValueProblem(domain, [u, self.dudx], [self.RHS0,self.RHS], num_BCs=2, dtype = dtype)
         x_basis = domain.bases[0]
         self.N = N = x_basis.N
-
+        interval = domain.bases[0].interval
+        Lx = interval[1] - interval[0]
 
         diag = np.arange(N-1) + 1
-        self.D = D = sparse.diags(diag, offsets=1) * 2/3
+        self.D = D = sparse.diags(diag, offsets=1) * 2/Lx
 
         diag0 = np.ones(N)/2
         diag0[0] = 1
@@ -110,12 +111,12 @@ class CGLEquation:
         Z = sparse.csr_matrix((N, N))
         pen = self.problem.pencils[0]
         n = pen.wavenumbers
-            
-        L = sparse.bmat([[ Z,    Z],
-                             [ D,    -C]])
+        b = 0.5   
+        L = sparse.bmat([[ D,    -C],
+                             [ -C,    -(1+b*1j)*D]])
         
         M = sparse.csr_matrix((2*N+2, 2*N+2))
-        M[:N,:N] = C
+        M[N:2*N,:N] = C
   
         BC_rows = np.zeros((2, 2*N))
         i = np.arange(N)
@@ -134,6 +135,9 @@ class CGLEquation:
         pen.M.eliminate_zeros()
         self.t = 0
 
+
+    
+
     def evolve(self, timestepper, dt, num_steps):
         ts = timestepper(self.problem)
               
@@ -142,17 +146,17 @@ class CGLEquation:
         dudx = self.dudx
         duxdx = self.duxdx
         RHS = self.RHS
- 
-        b = 0.5
+        u.require_grid_space(scales=1)
+       
         c = -1.76
-        #for i in range(num_steps):
+        for i in range(num_steps):
             u.require_coeff_space()
-            dudx.require_coeff_space()
-            dudx.data = spla.spsolve(self.C ,self.D @ u.data)            
+                     
             RHS.require_coeff_space()
-            dudx.require_grid_space(scales=3/2)
+            u.require_grid_space(scales=3/2)            
+           
             RHS.require_grid_space(scales=3/2)
-            RHS.data = u + (1+1j*b)*duxdx.data - (1+1j*c)*np.abs(u.data)**2 * u.data 
+            RHS.data = - (1+1j*c)*u.data**2 * np.conj(u.data)
             RHS.require_coeff_space()
             RHS.data = self.C @ RHS.data
         
